@@ -1,7 +1,4 @@
 #include "BitcoinExchange.hpp"
-#include <vector>
-#include <deque>
-#include <list>
 
 int main(int argc, char **argv)
 {
