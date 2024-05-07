@@ -90,7 +90,7 @@ int check_date(std::string &date)
     int yearint = std::atoi(year.c_str());
     int monthint = std::atoi(month.c_str());
     int dayint = std::atoi(day.c_str());
-    if(yearint < 2009 || monthint > 12 || dayint > calendar[monthint])
+    if(yearint < 2009 || monthint > 12 || dayint > calendar[monthint - 1])
         return (1);
     return(0);
 }
