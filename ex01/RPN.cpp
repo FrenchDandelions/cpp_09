@@ -51,7 +51,6 @@ void RPN::doRPN(std::string &str)
 {
     if(str.size() == 0)
         throw std::logic_error("Error");
-
     std::string::iterator it = str.begin();
     for(; it != str.end(); it++)
     {
