@@ -15,4 +15,18 @@
 # define GREEN "\033[1;92m"
 # define YELLOW "\033[1;93m"
 
+class RPN
+{
+    private:
+        std::stack<int> _s;
+        RPN(const RPN &copy);
+        RPN& operator=(const RPN &copy);
+        void do_op(char c);
+
+    public:
+        RPN();
+        ~RPN();
+        void doRPN(std::string &str);
+};
+
 #endif
