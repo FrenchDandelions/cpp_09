@@ -1,7 +1,10 @@
 #ifndef PMERGEME_HPP
 # define PMERGEME_HPP
 
-#include <stack>
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <deque>
 
 # define RED "\033[1;31m"
 # define RESET "\033[0m"
@@ -13,5 +16,20 @@
 # define GREEN "\033[1;92m"
 # define YELLOW "\033[1;93m"
 
+class PmergeMe
+{
+    private:
+        std::vector<int> _v;
+        std::deque<int> _d;
+
+    public:
+        PmergeMe();
+        PmergeMe(const PmergeMe& copy);
+        PmergeMe& operator= (const PmergeMe &copy);
+        ~PmergeMe();
+        void add(std::vector<int> v);
+        void parse(const char* s);
+        void sort();
+};
 
 #endif

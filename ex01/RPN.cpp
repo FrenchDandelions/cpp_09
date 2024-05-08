@@ -44,7 +44,11 @@ void RPN::do_op(char c)
     else if(c == '*')
         this->_s.push(second * first);
     else if(c == '/')
+    {
+        if(first == 0)
+            throw std::logic_error("Error");
         this->_s.push(second / first);
+    }
 }
 
 void RPN::doRPN(std::string &str)

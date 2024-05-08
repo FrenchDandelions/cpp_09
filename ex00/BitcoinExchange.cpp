@@ -62,6 +62,15 @@ void BTCExchange::getData(void)
         throw std::logic_error("Error, couldn't open data.csv file");
 }
 
+int is_leap_year(int year)
+{
+    if ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0)
+    {
+        return(1);
+    }
+    return(0);
+}
+
 int check_number(std::string &line, size_t it)
 {
     int count_neg = 0;
@@ -83,13 +92,23 @@ int check_number(std::string &line, size_t it)
 
 int check_date(std::string &date)
 {
-    int calendar[13] = {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+    int *calendar;
     std::string year = date.substr(0, 4);
     std::string month = date.substr(5, 2);
     std::string day = date.substr(8, 2);
     int yearint = std::atoi(year.c_str());
     int monthint = std::atoi(month.c_str());
     int dayint = std::atoi(day.c_str());
+    if(is_leap_year(yearint))
+    {
+        int calendar2[13] = {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+        calendar = calendar2;
+    }
+    else
+    {
+        int calendar2[13] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+        calendar = calendar2;
+    }
     if(yearint < 2009 || yearint < 0 ||monthint > 12 || monthint < 0|| dayint > calendar[monthint - 1])
         return (1);
     return(0);
