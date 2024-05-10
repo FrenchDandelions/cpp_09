@@ -28,6 +28,7 @@ class PmergeMe
         PmergeMe& operator= (const PmergeMe &copy);
         ~PmergeMe();
         void add(std::vector<int> v);
+        void add(std::deque<int> d);
         void parse(const char* s);
         void sort();
 };
