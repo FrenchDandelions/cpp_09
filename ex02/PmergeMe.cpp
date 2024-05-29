@@ -1,22 +1,22 @@
 #include "PmergeMe.hpp"
-#include <climits>
-#include <errno.h>
-#include <sys/time.h>
 
 PmergeMe::PmergeMe()
 {
+    this->_odd = -1;
 }
 
 PmergeMe::PmergeMe(const PmergeMe &copy)
 {
     this->_v.operator=(copy._v);
     this->_d.operator=(copy._d);
+    this->_odd = copy._odd;
 }
 
 PmergeMe& PmergeMe::operator=(const PmergeMe &copy)
 {
     if(this != &copy)
     {
+        this->_odd = copy._odd;
         this->_v.operator=(copy._v);
         this->_d.operator=(copy._d);
     }
@@ -46,114 +46,52 @@ void PmergeMe::parse(const char*s)
         throw std::logic_error("Error");
 }
 
-template <typename T>
-T merge(const T& left, const T& right)
+void getJacobsthal(std::vector<int> &v)
 {
-    T result;
-    typename T::const_iterator it = left.begin();
-    typename T::const_iterator ite = right.begin();
+    static const int jacob[31] = {1, 3, 5, 11, 21, 43, 85, 171, 341, 683, 1365, 2731, 5461, 10923, 21845, 43691, 87381, 174763, 349525, 699051, 1398101, 2796203, 5592405, 11184811, 22369621, 44739243, 89478485, 178956971, 357913941, 715827883, 1431655765};
+    for(int i = 0; i < 31; i++)
+        v.push_back(jacob[i]);
+    return;
+}
 
-    while(it != left.end() && ite != right.end())
+void printPrompt(char *color, const std::string &str)
+{
+    std::cout << color << "---------------------------------------------------"<< std::endl;
+	std::cout << str << std::endl;
+	std::cout << "---------------------------------------------------" RESET << std::endl;
+}
+
+void print_deque(const std::deque<int> &v)
+{
+    size_t size = v.size();
+
+    std::cout << LIGHTB;
+    for(size_t i = 0; i < size; i++)
     {
-        if(*it < *ite)
-        {
-            result.push_back(*it);
-            it++;
-        }
-        else
-        {
-            result.push_back(*ite);
-            ite++;
-        }
+        std::cout << v[i] << " ";
     }
-    for(; it != left.end(); it++)
-        result.push_back(*it);
-    for(; ite != right.end(); ite++)
-        result.push_back(*ite);
-    return(result);
+    std::cout << RESET "    with std::[deque] ";
 }
 
-template <typename T>
-T insertion_sort(T container)
+void print_vector(const std::vector<int> &v)
 {
-    size_t i;
-    size_t j;
-    int key;
-    for (i = 1; i < container.size() ; i++) {
-        key = container[i];
-        j = i;
+    size_t size = v.size();
 
-        while (j > 0 && container[j - 1] > key) {
-            container[j] = container[j - 1];
-            j--;
-        }
-        container[j] = key;
-    }
-    return container;
-}
+    std::cout << PURP;
 
-template <typename T>
-T merge_insert_sort(T container)
-{
-    if(container.size() <= 10)
-        return(insertion_sort(container));
-    
-    typename T::iterator middle = container.begin() + (container.size() /2);
-
-    T l(container.begin(), middle);
-    T r(middle, container.end());
-    
-    l = merge_insert_sort(l);
-    r = merge_insert_sort(r);
-    return(merge(l, r));
-}
-
-double	get_current_time(void)
-{
-	struct timeval	time;
-
-	if (gettimeofday(&time, NULL) == -1)
-        throw std::logic_error("gettimeofday() error");
-	return ((double) (time.tv_sec * 1000000 + time.tv_usec));
-}
-
-template <typename T>
-void print_container(T &container)
-{
-    typename T::iterator it = container.begin();
-    for(; it != container.end(); it++)
+    for(size_t i = 0; i < size; i++)
     {
-        std::cout << *it << " ";
+        std::cout << v[i] << " ";
     }
-    std::cout << std::endl;
-}
-
-void print_process(int size, std::string type ,double start, double end)
-{
-    std::cout << "Time to process a range of " << size << " elements with std::[" << type << "] :  " << end - start<< " us" << std::endl; 
+    std::cout << RESET "    with std::[vector] ";
 }
 
 void PmergeMe::sort()
 {
-    double curr_time = get_current_time();
-    std::cout << "Before:   ";
-    print_container<std::vector<int> >(this->_v);
-    this->_v = merge_insert_sort<std::vector<int> >(this->_v);
-    std::cout << "\n";
-    std::cout << "After:   ";
-    print_container<std::vector<int> >(this->_v);
-    std::cout << "\n";
-    print_process(this->_v.size(), "vector" ,curr_time, get_current_time());
-    std::cout << "\n\n";
-    curr_time = get_current_time();
-    std::cout << "Before:   ";
-    print_container<std::deque<int> >(this->_d);
-    this->_d = merge_insert_sort<std::deque<int> >(this->_d);
-    std::cout << "\n";
-    std::cout << "After:   ";
-    print_container<std::deque<int> >(this->_d);
-    std::cout << "\n";
-    print_process(this->_d.size(), "deque" , curr_time, get_current_time());
+    sort_vector();
+    std::cout << RESET "\n\n";
+    sort_deque();
+    std::cout << RESET ;
 }
 
 PmergeMe::~PmergeMe()

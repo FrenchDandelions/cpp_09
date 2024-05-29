@@ -49,7 +49,11 @@ void BTCExchange::getData(void)
                 break;
             i++;
             if(i == 1)
-                continue;
+            {
+                std::size_t pos = line.find("date");
+                if(pos != std::string::npos)
+                    continue;
+            }
             std::size_t it = line.find(',');
             if(it == std::string::npos)
                 throw std::logic_error("Parsing error in the data.csv file, how?");
@@ -96,6 +100,21 @@ int check_date(std::string &date)
     std::string year = date.substr(0, 4);
     std::string month = date.substr(5, 2);
     std::string day = date.substr(8, 2);
+    for(std::string::iterator it = year.begin(); it != year.end(); it++)
+    {
+        if(!std::isdigit(*it))
+            return(2);
+    }
+    for(std::string::iterator it = month.begin(); it != month.end(); it++)
+    {
+        if(!std::isdigit(*it))
+            return(2);
+    }
+    for(std::string::iterator it = day.begin(); it != day.end(); it++)
+    {
+        if(!std::isdigit(*it))
+            return(2);
+    }
     int yearint = std::atoi(year.c_str());
     int monthint = std::atoi(month.c_str());
     int dayint = std::atoi(day.c_str());
@@ -109,7 +128,7 @@ int check_date(std::string &date)
         int calendar2[13] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
         calendar = calendar2;
     }
-    if(yearint < 2009 || yearint < 0 ||monthint > 12 || monthint < 0|| dayint > calendar[monthint - 1])
+    if(yearint < 2009 || yearint < 0 ||monthint > 12 || monthint <= 0|| dayint > calendar[monthint - 1] || dayint <= 0)
         return (1);
     return(0);
 }
@@ -128,6 +147,12 @@ void BTCExchange::getInput(void)
             if(!getline(input, line))
                 break;
             if(i++ == 0)
+            {
+                std::size_t pos = line.find("date");
+                    if (pos != std::string::npos)
+                        continue;
+            }
+            if(line.empty())
                 continue;
             std::size_t it = line.find('|');
             if(it == std::string::npos)
@@ -148,9 +173,10 @@ void BTCExchange::getInput(void)
                 continue;
             }
             std::string date = line.substr(0, it - 1);
-            if(check_date(date))
+            int check = check_date(date);
+            if(check)
             {
-                std::cerr << "Error: invalid date." << std::endl;
+                std::cerr << "Error: invalid date => " << date << std::endl;
                 continue;
             }
             double key = std::atof(line.substr(it + 2, line.size()).c_str());
@@ -162,7 +188,11 @@ void BTCExchange::getInput(void)
             std::map<std::string, double>::iterator ite = this->_data.upper_bound(date);
             if(ite != this->_data.begin())
                 ite--;
-            // std::cout << ite->first << std::endl;
+            else
+            {
+                std::cerr << "Error: invalid date." << std::endl;
+                continue;
+            }
             std::cout << date << " => " << key * ite->second << std::endl;
         }
     }

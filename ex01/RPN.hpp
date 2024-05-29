@@ -2,8 +2,8 @@
 # define RPN_HPP
 
 # include <iostream>
-# include <stack>
 # include <algorithm>
+# include <list>
 
 # define RED "\033[1;31m"
 # define RESET "\033[0m"
@@ -18,7 +18,7 @@
 class RPN
 {
     private:
-        std::stack<int> _s;
+        std::list<double> _s;
         RPN(const RPN &copy);
         RPN& operator=(const RPN &copy);
         void do_op(char c);
